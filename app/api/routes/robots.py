@@ -5,10 +5,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
 from app.core.security import get_current_user_id
-from app.schemas.robot import RobotPairRequest, RobotResponse, RobotUpdate, SuccessResponse
+from app.schemas.robot import RobotPairRequest, RobotResponse, RobotUpdate, SuccessResponse, RobotRegisterRequest
 from app.services.robot_service import robot_service
 
 router = APIRouter()
+
+@router.post("/register", response_model=RobotResponse, status_code=status.HTTP_201_CREATED)
+async def register_robot(
+    register_request: RobotRegisterRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    return await robot_service.register_robot(db, register_request)
 
 @router.post("/pair", response_model=SuccessResponse, status_code=status.HTTP_200_OK)
 async def pair_robot(

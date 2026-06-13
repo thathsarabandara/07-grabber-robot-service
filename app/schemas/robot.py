@@ -3,6 +3,13 @@ from typing import Optional
 from datetime import datetime
 from uuid import UUID
 
+class RobotRegisterRequest(BaseModel):
+    robot_id: str
+    serial_key: str
+    name: Optional[str] = None
+    model: Optional[str] = None
+    firmware_version: Optional[str] = None
+
 class RobotPairRequest(BaseModel):
     robotId: str
     serialKey: str
