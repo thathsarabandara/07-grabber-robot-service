@@ -49,3 +49,11 @@ async def close_gripper(
     user_id: str = Depends(get_current_user_id)
 ):
     return await command_service.execute_command(db, user_id, robotId, "close-gripper")
+
+@router.post("/clear-emergency-stop", response_model=CommandResponse, status_code=status.HTTP_202_ACCEPTED)
+async def clear_emergency_stop(
+    robotId: UUID,
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    return await command_service.execute_command(db, user_id, robotId, "clear-emergency-stop")
