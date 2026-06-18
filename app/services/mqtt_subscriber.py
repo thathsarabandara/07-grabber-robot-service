@@ -110,8 +110,7 @@ async def mqtt_subscriber_task():
                                     payload={"errorCode": error_code, "details": payload}
                                 )
                     elif subtopic == "telemetry":
-                        telemetry_key = f"robot:{robot_id}:telemetry"
-                        await redis_client.set(telemetry_key, json.dumps(payload))
+                        # Handled by Telemetry Service
                         continue
                     
                     if state == "ERROR":
