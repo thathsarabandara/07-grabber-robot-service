@@ -2,7 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import health, robots, commands, poses
+from app.api.routes import health, robots, commands, poses, sequences
 from app.core.db import init_db
 from app.core.config import settings
 from app.services.mqtt_subscriber import mqtt_subscriber_task, heartbeat_monitor_task
@@ -53,6 +53,7 @@ app.include_router(health.router, prefix="/api", tags=["health"])
 app.include_router(robots.router, prefix="/api/v1/robots", tags=["robots"])
 app.include_router(commands.router, prefix="/api/v1/robots/{robotId}/commands", tags=["commands"])
 app.include_router(poses.router, prefix="/api/v1/robots/{robotId}/poses", tags=["poses"])
+app.include_router(sequences.router, prefix="/api/v1/robots/{robotId}/sequences", tags=["sequences"])
 
 @app.get("/")
 def read_root():
