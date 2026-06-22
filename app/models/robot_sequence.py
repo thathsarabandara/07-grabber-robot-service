@@ -11,7 +11,7 @@ class RobotSequence(SQLModel, table=True):
     robot_id: uuid.UUID = Field(index=True)
     name: str = Field(max_length=255)
     
-    # Store list of frame states. Each frame is a dict like {'j1': 90, 'j2': 90, 'j3': 50, 'j4': 90, 'time': 123456789}
+    # Store list of frame states. Each frame is a dict like {'j1': 90, 'j2': 100, 'j3': 60, 'j4': 90, 'time': 123456789}
     frames: List[Dict[str, Any]] = Field(default=[], sa_column=Column(JSON))
     
     created_at: datetime = Field(default_factory=datetime.utcnow)
