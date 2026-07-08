@@ -1,15 +1,37 @@
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException, status
+import hashlib
 
 from app.models.robot import Robot
 from app.models.robot_ownership import RobotOwnership
-from app.schemas.robot import RobotPairRequest, RobotUpdate
+from app.schemas.robot import RobotPairRequest, RobotUpdate, RobotRegisterRequest
 from app.services.event_service import event_service
 
 class RobotService:
+    async def register_robot(self, db: AsyncSession, register_data: RobotRegisterRequest) -> Robot:
+        # Check if robot already exists
+        result = await db.execute(select(Robot).where(Robot.robot_id == register_data.robot_id))
+        if result.scalars().first():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Robot already registered")
+            
+        # Hash the serial key
+        hashed_key = hashlib.sha256(register_data.serial_key.encode()).hexdigest()
+        
+        new_robot = Robot(
+            robot_id=register_data.robot_id,
+            serial_key_hash=hashed_key,
+            name=register_data.name,
+            model=register_data.model,
+            firmware_version=register_data.firmware_version
+        )
+        db.add(new_robot)
+        await db.commit()
+        await db.refresh(new_robot)
+        return new_robot
+
     async def pair_robot(self, db: AsyncSession, user_id: str, pair_request: RobotPairRequest) -> Robot:
         # Check if robot exists and serial key matches
         result = await db.execute(select(Robot).where(Robot.robot_id == pair_request.robotId))
@@ -18,9 +40,9 @@ class RobotService:
         if not robot:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Robot not found")
         
-        # In a real scenario, we'd hash and verify pair_request.serialKey against robot.serial_key_hash
-        # For this implementation, we just check equality (assuming it's a raw string for simplicity)
-        if robot.serial_key_hash != pair_request.serialKey:
+        # Hash and verify pair_request.serialKey against robot.serial_key_hash
+        hashed_pair_key = hashlib.sha256(pair_request.serialKey.encode()).hexdigest()
+        if robot.serial_key_hash != hashed_pair_key:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid serial key")
             
         # Check if already paired
@@ -48,7 +70,7 @@ class RobotService:
 
     async def get_robot(self, db: AsyncSession, user_id: str, robot_id: UUID) -> Robot:
         # Check ownership
-        ownership = await self._check_ownership(db, user_id, robot_id)
+        await self._check_ownership(db, user_id, robot_id)
         
         result = await db.execute(select(Robot).where(Robot.id == robot_id))
         robot = result.scalars().first()

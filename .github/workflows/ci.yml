@@ -62,3 +62,24 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Update GitOps Manifest Tag
+      if: github.event_name == 'push'
+      env:
+        GITOPS_TOKEN: ${{ secrets.GITOPS_TOKEN }}
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git clone https://${{ secrets.GITOPS_TOKEN }}@github.com/thathsarabandara/grabber-gitops-manifests.git
+        cd grabber-gitops-manifests
+        
+        # Extract short SHA for image tag
+        IMAGE_TAG="sha-${GITHUB_SHA::7}"
+        
+        # Replace the image tag in the deployment manifest file
+        sed -i "s|image: ghcr.io/thathsarabandara/07-grabber-robot-service:.*|image: ghcr.io/thathsarabandara/07-grabber-robot-service:$IMAGE_TAG|g" k8s/robot-service-deployment.yaml
+        
+        # Commit and push changes back to the manifests repo
+        git add k8s/robot-service-deployment.yaml
+        git commit -m "Bump Robot Service image to $IMAGE_TAG [skip ci]"
+        git push origin main

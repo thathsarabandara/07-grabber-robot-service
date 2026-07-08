@@ -1,6 +1,5 @@
 from datetime import datetime
 import uuid
-from typing import Optional
 from sqlmodel import Field, SQLModel
 
 class RobotOwnership(SQLModel, table=True):
