@@ -1,20 +1,17 @@
 from typing import Any, Dict
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
-
 from app.models.robot_command import RobotCommand
 from app.services.mqtt_service import mqtt_service
 from app.services.event_service import event_service
 from app.services.robot_service import robot_service
-
 class CommandService:
     async def execute_command(
-        self, 
-        db: AsyncSession, 
-        user_id: str, 
-        robot_id: UUID, 
-        command_type: str, 
+        self,
+        db: AsyncSession,
+        user_id: str,
+        robot_id: UUID,
+        command_type: str,
         payload: Dict[str, Any] = None
     ) -> RobotCommand:
         # Validate ownership

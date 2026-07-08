@@ -41,7 +41,7 @@ class MQTTService:
                 print(f"Published to {topic}: {message}")
         except Exception as e:
             print(f"Failed to publish MQTT message: {e}")
-            # In a real app we might want to retry or raise, 
+            # In a real app we might want to retry or raise,
             # but for V1 we just log it.
 
 mqtt_service = MQTTService()

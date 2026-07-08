@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -70,7 +70,7 @@ class RobotService:
 
     async def get_robot(self, db: AsyncSession, user_id: str, robot_id: UUID) -> Robot:
         # Check ownership
-        ownership = await self._check_ownership(db, user_id, robot_id)
+        await self._check_ownership(db, user_id, robot_id)
         
         result = await db.execute(select(Robot).where(Robot.id == robot_id))
         robot = result.scalars().first()

@@ -1,6 +1,6 @@
 from datetime import datetime
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from sqlalchemy import Column, JSON
 from sqlmodel import Field, SQLModel
 
