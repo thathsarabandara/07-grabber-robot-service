@@ -7,6 +7,7 @@ from app.core.db import init_db
 from app.core.config import settings
 from app.services.mqtt_subscriber import mqtt_subscriber_task, heartbeat_monitor_task
 from app.services.websocket_manager import manager
+from prometheus_fastapi_instrumentator import Instrumentator
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,6 +40,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Prometheus Instrumentation
+Instrumentator().instrument(app).expose(app)
 
 @app.websocket("/api/v1/robots/ws")
 async def websocket_endpoint(websocket: WebSocket):
