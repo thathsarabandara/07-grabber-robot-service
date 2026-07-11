@@ -8,7 +8,7 @@
 [![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20Redis-blue.svg?style=flat-square)]()
 [![Messaging](https://img.shields.io/badge/Messaging-MQTT-3C3C3D?logo=mqtt&style=flat-square)]()
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg?style=flat-square)]()
-
+[![CI](https://github.com/thathsarabandara/07-grabber-robot-service/actions/workflows/ci.yml/badge.svg?branch=main)]()
 ---
 
 ## 🎥 Video Demonstration
@@ -272,6 +272,18 @@ Build and run the container locally:
 ```bash
 docker compose up -d --build
 ```
+
+## ⚙️ CI/CD Pipeline
+
+This project uses **GitHub Actions** for Continuous Integration and Deployment.
+The pipeline consists of the following steps:
+- **Checkout**: Fetch source code.
+- **Environment**: Set up Python 3.11.
+- **Install Dependencies**: Install lightweight CI tools.
+- **Lint**: Run security scan (bandit) and lint (flake8).
+- **Test**: Run unit tests with coverage (pytest).
+- **Build**: Build Docker image.
+- **Push**: Push to GitHub Container Registry (GHCR).
 
 ---
 
